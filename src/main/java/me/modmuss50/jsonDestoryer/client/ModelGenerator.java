@@ -29,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.ItemModelMesherForge;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.*;
@@ -200,7 +201,21 @@ public class ModelGenerator {
                     if (texture == null) {
                         break;
                     }
-                    ModelResourceLocation inventory = getItemInventoryResourceLocation(item);
+
+                    ModelResourceLocation inventory;
+
+
+                    //TODO fix this bullshit
+                    if (iTexturedItem.getMaxDamage() == 1) {
+                        inventory = getItemInventoryResourceLocation(item);
+                    } else {
+                        inventory = new ModelResourceLocation(item.getRegistryName().split(":")[0] + ":" + item.getUnlocalizedName(new ItemStack(item, 1, i)).substring(5), "inventory");
+                    }
+                    if(item.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0) != null){
+                        inventory = item.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0);
+                    }
+                    System.out.println(item.getRegistryName().split(":")[0]);
+
 
                     final TextureAtlasSprite finalTexture = texture;
                     Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
@@ -369,6 +384,7 @@ public class ModelGenerator {
             this.sprite = sprite;
             this.textureName = textureName;
         }
+
     }
 
     public class CustomModel extends ItemLayerModel {

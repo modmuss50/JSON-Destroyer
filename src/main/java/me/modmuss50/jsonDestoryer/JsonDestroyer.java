@@ -37,7 +37,9 @@ public class JsonDestroyer {
      */
     public void registerObject(Object object) {
         if (object instanceof IDestroyable) {
-            objectsToDestroy.add(object);
+            if(!objectsToDestroy.contains(object)){
+                objectsToDestroy.add(object);
+            }
         }
     }
 

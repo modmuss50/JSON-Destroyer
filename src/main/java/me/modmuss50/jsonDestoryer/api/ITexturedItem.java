@@ -12,7 +12,7 @@ public interface ITexturedItem extends IDestroyable {
     String getTextureName(int damage);
 
     /**
-     * @return Return 0 if basic item, else return the max damage
+     * @return Return 1 if basic item, else return the max damage
      */
     int getMaxDamage();
 }
