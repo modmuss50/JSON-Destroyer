@@ -1,0 +1,17 @@
+/bin
+/out
+/run
+/build
+/.gradle
+*.iml
+/.metadata
+/.settings
+./classpath
+/dep
+
+TechReborn.iws
+TechReborn.ipr
+Thumbs.db
+changelog.txt
+*.log
+.idea/*

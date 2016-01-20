@@ -1,0 +1,102 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+//Use java 6
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+version = "0.0"
+
+def ENV = System.getenv()
+if (ENV.BUILD_NUMBER) {
+    version = version + "." + "${System.getenv().BUILD_NUMBER}"
+}
+
+minecraft {
+    version = "1.8.9-11.15.0.1709"
+    mappings = 'snapshot_20160119'
+    runDir = "run"
+}
+
+group = 'JSON-Destoyer'
+
+dependencies {
+  //Nope
+}
+
+//I keep this becuase it will make shading easy
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'dev'
+}
+
+jar {
+    exclude "**/*.psd"
+    classifier = 'universal'
+}
+
+artifacts {
+    archives deobfJar
+}
+
+build.dependsOn deobfJar
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "file:///var/www/maven/")
+            pom {
+                groupId = "JSON-Destoyer"
+                version = project.version
+                artifactId = project.archivesBaseName
+                project {
+                    name project.archivesBaseName
+                    packaging 'jar'
+                    description 'JSON-Destoyer'
+                    url 'https://github.com/modmuss50/JSON-Destroyer'
+                    scm {
+                        url 'https://github.com/modmuss50/JSON-Destroyer'
+                        connection 'scm:git:git@github.com:modmuss50/JSON-Destroyer.git'
+                        developerConnection 'scm:git:git@github.com:modmuss50/JSON-Destroyer.git'
+                    }
+                    issueManagement {
+                        system 'github'
+                        url 'https://github.com/modmuss50/JSON-Destroyer/issues'
+                    }
+                    licenses {
+                        license {
+                            name 'License'
+                            url 'https://raw.githubusercontent.com/modmuss50/JSON-Destroyer/LICENSE.md'
+                            distribution 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'modmuss50'
+                            name 'modmuss50'
+                            roles { role 'developer' }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
