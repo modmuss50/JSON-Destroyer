@@ -33,11 +33,12 @@ public class JsonDestroyer {
 
     /**
      * Use this to register an object to be rendered
+     *
      * @param object the object to load
      */
     public void registerObject(Object object) {
         if (object instanceof IDestroyable) {
-            if(!objectsToDestroy.contains(object)){
+            if (!objectsToDestroy.contains(object)) {
                 objectsToDestroy.add(object);
             }
         }

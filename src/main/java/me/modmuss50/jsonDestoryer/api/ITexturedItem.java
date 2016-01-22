@@ -14,5 +14,5 @@ public interface ITexturedItem extends IDestroyable {
     /**
      * @return Return 1 if basic item, else return the max damage
      */
-    int getMaxDamage();
+    int getMaxMeta();
 }

@@ -29,7 +29,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.ItemModelMesherForge;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.*;
@@ -59,6 +58,8 @@ public class ModelGenerator {
     public HashMap<BlockIconInfo, TextureAtlasSprite> blockIconList = new HashMap<BlockIconInfo, TextureAtlasSprite>();
     public HashMap<BlockFluidBase, TextureAtlasSprite> fluidIcons = new HashMap<BlockFluidBase, TextureAtlasSprite>();
     public List<ItemIconInfo> itemIcons = new ArrayList<ItemIconInfo>();
+
+    private boolean isFisrtLoad = true;
 
     public ModelGenerator(JsonDestroyer jsonDestroyer) {
         this.jsonDestroyer = jsonDestroyer;
@@ -97,7 +98,8 @@ public class ModelGenerator {
                 fluidIcons.put((BlockFluidBase) object, texture);
             } else if (object instanceof Item && object instanceof ITexturedItem) {
                 ITexturedItem itemTexture = (ITexturedItem) object;
-                for (int i = 0; i < itemTexture.getMaxDamage(); i++) {
+                Item item = (Item) object;
+                for (int i = 0; i < itemTexture.getMaxMeta(); i++) {
                     String name = itemTexture.getTextureName(i);
                     TextureAtlasSprite texture = textureMap.getTextureExtry(name);
                     if (texture == null) {
@@ -188,7 +190,7 @@ public class ModelGenerator {
             } else if (object instanceof Item && object instanceof ITexturedItem) {
                 ITexturedItem iTexturedItem = (ITexturedItem) object;
                 Item item = (Item) object;
-                for (int i = 0; i < iTexturedItem.getMaxDamage(); i++) {
+                for (int i = 0; i < iTexturedItem.getMaxMeta(); i++) {
                     TextureAtlasSprite texture = null;
                     ItemIconInfo itemIconInfo = null;
                     for (ItemIconInfo info : itemIcons) {
@@ -203,19 +205,13 @@ public class ModelGenerator {
                     }
 
                     ModelResourceLocation inventory;
+                    inventory = getItemInventoryResourceLocation(item);
 
-
-                    //TODO fix this bullshit
-                    if (iTexturedItem.getMaxDamage() == 1) {
-                        inventory = getItemInventoryResourceLocation(item);
-                    } else {
-                        inventory = new ModelResourceLocation(item.getRegistryName().split(":")[0] + ":" + item.getUnlocalizedName(new ItemStack(item, 1, i)).substring(5), "inventory");
+                    if (iTexturedItem.getMaxMeta() != 1) {
+                        if (item.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0) != null) {
+                            inventory = item.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0);
+                        }
                     }
-                    if(item.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0) != null){
-                        inventory = item.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0);
-                    }
-                    System.out.println(item.getRegistryName().split(":")[0]);
-
 
                     final TextureAtlasSprite finalTexture = texture;
                     Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
@@ -227,9 +223,8 @@ public class ModelGenerator {
                     builder.add(new ResourceLocation(itemIconInfo.textureName));
                     CustomModel itemLayerModel = new CustomModel(builder.build());
                     IBakedModel model = itemLayerModel.bake(ItemLayerModel.instance.getDefaultState(), DefaultVertexFormats.ITEM, textureGetter);
-                    event.modelRegistry.putObject(inventory, model);
                     itemModelMesher.register(item, i, inventory);
-
+                    event.modelRegistry.putObject(inventory, model);
                 }
             }
         }
