@@ -1,4 +1,4 @@
-package me.modmuss50.jsonDestoryer.api;
+package me.modmuss50.jsonDestroyer.api;
 
 /**
  * Use this to apply a texture to an item

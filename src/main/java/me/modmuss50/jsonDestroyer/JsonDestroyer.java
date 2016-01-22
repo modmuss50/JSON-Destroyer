@@ -1,8 +1,8 @@
-package me.modmuss50.jsonDestoryer;
+package me.modmuss50.jsonDestroyer;
 
 
-import me.modmuss50.jsonDestoryer.api.IDestroyable;
-import me.modmuss50.jsonDestoryer.client.ModelGenerator;
+import me.modmuss50.jsonDestroyer.api.IDestroyable;
+import me.modmuss50.jsonDestroyer.client.ModelGenerator;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;

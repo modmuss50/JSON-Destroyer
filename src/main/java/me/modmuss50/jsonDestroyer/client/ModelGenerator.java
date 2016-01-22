@@ -1,13 +1,13 @@
-package me.modmuss50.jsonDestoryer.client;
+package me.modmuss50.jsonDestroyer.client;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import me.modmuss50.jsonDestoryer.JsonDestroyer;
-import me.modmuss50.jsonDestoryer.api.ITexturedBlock;
-import me.modmuss50.jsonDestoryer.api.ITexturedFluid;
-import me.modmuss50.jsonDestoryer.api.ITexturedItem;
+import me.modmuss50.jsonDestroyer.JsonDestroyer;
+import me.modmuss50.jsonDestroyer.api.ITexturedBlock;
+import me.modmuss50.jsonDestroyer.api.ITexturedFluid;
+import me.modmuss50.jsonDestroyer.api.ITexturedItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;

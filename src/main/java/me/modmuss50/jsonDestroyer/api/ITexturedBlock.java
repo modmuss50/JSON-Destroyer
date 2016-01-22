@@ -1,4 +1,4 @@
-package me.modmuss50.jsonDestoryer.api;
+package me.modmuss50.jsonDestroyer.api;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;

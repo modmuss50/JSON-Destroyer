@@ -36,7 +36,7 @@ minecraft {
     runDir = "run"
 }
 
-group = 'JSON-Destoyer'
+group = 'JSON-Destroyer'
 
 dependencies {
   //Nope
@@ -64,7 +64,7 @@ uploadArchives {
         mavenDeployer {
             repository(url: "file:///var/www/maven/")
             pom {
-                groupId = "JSON-Destoyer"
+                groupId = "JSON-Destroyer"
                 version = project.version
                 artifactId = project.archivesBaseName
                 project {
