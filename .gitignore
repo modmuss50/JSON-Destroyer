@@ -9,8 +9,9 @@
 ./classpath
 /dep
 
-TechReborn.iws
-TechReborn.ipr
+JSON-Destroyer.iws
+JSON-Destroyer.ipr
+JSON-Destroyer.iml
 Thumbs.db
 changelog.txt
 *.log
