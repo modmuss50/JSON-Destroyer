@@ -21,5 +21,5 @@ public interface ITexturedBlock extends IDestroyable {
      *
      * @return the amount of states to load textures for, the state is based on Block.getStateFromMeta
      */
-    int amountOfSates();
+    int amountOfStates();
 }
