@@ -73,7 +73,7 @@ public class ModelGenerator {
             if (object instanceof Block && object instanceof ITexturedBlock) {
                 ITexturedBlock blockTextureProvider = (ITexturedBlock) object;
                 Block block = (Block) object;
-                for (int i = 0; i < blockTextureProvider.amountOfSates(); i++) {
+                for (int i = 0; i < blockTextureProvider.amountOfStates(); i++) {
                     for (EnumFacing side : EnumFacing.values()) {
                         String name;
                         name = blockTextureProvider.getTextureNameFromState(block.getStateFromMeta(i), side);
@@ -122,7 +122,7 @@ public class ModelGenerator {
             if (object instanceof Block && object instanceof ITexturedBlock) {
                 ITexturedBlock textureProvdier = (ITexturedBlock) object;
                 Block block = (Block) object;
-                for (int i = 0; i < textureProvdier.amountOfSates(); i++) {
+                for (int i = 0; i < textureProvdier.amountOfStates(); i++) {
                     HashMap<EnumFacing, TextureAtlasSprite> textureMap = new HashMap<EnumFacing, TextureAtlasSprite>();
                     for (EnumFacing side : EnumFacing.VALUES) {
                         for (BlockIconInfo iconInfo : blockIconInfoList) {
