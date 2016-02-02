@@ -6,11 +6,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import me.modmuss50.jsonDestroyer.JsonDestroyer;
 import me.modmuss50.jsonDestroyer.api.ITexturedBlock;
+import me.modmuss50.jsonDestroyer.api.ITexturedBucket;
 import me.modmuss50.jsonDestroyer.api.ITexturedFluid;
 import me.modmuss50.jsonDestroyer.api.ITexturedItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.*;
@@ -26,21 +28,32 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fml.common.event.FMLLoadEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import org.lwjgl.util.vector.Vector3f;
 
+import javax.imageio.ImageIO;
 import javax.vecmath.Matrix4f;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,8 +71,6 @@ public class ModelGenerator {
     public HashMap<BlockIconInfo, TextureAtlasSprite> blockIconList = new HashMap<BlockIconInfo, TextureAtlasSprite>();
     public HashMap<BlockFluidBase, TextureAtlasSprite> fluidIcons = new HashMap<BlockFluidBase, TextureAtlasSprite>();
     public List<ItemIconInfo> itemIcons = new ArrayList<ItemIconInfo>();
-
-    private boolean isFisrtLoad = true;
 
     public ModelGenerator(JsonDestroyer jsonDestroyer) {
         this.jsonDestroyer = jsonDestroyer;
@@ -107,6 +118,19 @@ public class ModelGenerator {
                         textureMap.setTextureEntry(name, texture);
                     }
                     ItemIconInfo info = new ItemIconInfo((Item) object, i, texture, name);
+                    itemIcons.add(info);
+                }
+            } else if (object instanceof Item && object instanceof ITexturedBucket) {
+                ITexturedBucket itemTexture = (ITexturedBucket) object;
+                for (int i = 0; i < itemTexture.getMaxMeta(); i++) {
+                    String name = itemTexture.getFluid(i).getStill().toString();
+                    TextureAtlasSprite texture = textureMap.getTextureExtry(name);
+                    if (texture == null) {
+                        texture = new CustomTexture(name);
+                        textureMap.setTextureEntry(name, texture);
+                    }
+                    ItemIconInfo info = new ItemIconInfo((Item) object, i, texture, name);
+                    info.isBucket = true;
                     itemIcons.add(info);
                 }
             }
@@ -194,7 +218,7 @@ public class ModelGenerator {
                     TextureAtlasSprite texture = null;
                     ItemIconInfo itemIconInfo = null;
                     for (ItemIconInfo info : itemIcons) {
-                        if (info.damage == i && info.getItem() == item) {
+                        if (info.damage == i && info.getItem() == item && info.isBucket == false) {
                             texture = info.getSprite();
                             itemIconInfo = info;
                             break;
@@ -223,6 +247,29 @@ public class ModelGenerator {
                     builder.add(new ResourceLocation(itemIconInfo.textureName));
                     CustomModel itemLayerModel = new CustomModel(builder.build());
                     IBakedModel model = itemLayerModel.bake(ItemLayerModel.instance.getDefaultState(), DefaultVertexFormats.ITEM, textureGetter);
+                    itemModelMesher.register(item, i, inventory);
+                    event.modelRegistry.putObject(inventory, model);
+                }
+            } else if (object instanceof Item && object instanceof ITexturedBucket) {
+                ITexturedBucket iTexturedBucket = (ITexturedBucket) object;
+                Item item = (Item) object;
+                for (int i = 0; i < iTexturedBucket.getMaxMeta(); i++) {
+                    ModelResourceLocation inventory;
+                    inventory = getItemInventoryResourceLocation(item);
+                    if (iTexturedBucket.getMaxMeta() != 1) {
+                        if (item.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0) != null) {
+                            inventory = item.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0);
+                        }
+                    }
+                    Function<ResourceLocation, TextureAtlasSprite> textureGetter;
+                    textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
+                        public TextureAtlasSprite apply(ResourceLocation location) {
+                            return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+                        }
+                    };
+                    ModelDynBucket modelDynBucket = new ModelDynBucket(new ResourceLocation("forge:items/bucket_base"), new ResourceLocation("forge:items/bucket_fluid"), new ResourceLocation("forge:items/bucket_cover"), iTexturedBucket.getFluid(i), iTexturedBucket.isGas(i));
+
+                    IBakedModel model = modelDynBucket.bake(ItemLayerModel.instance.getDefaultState(), DefaultVertexFormats.ITEM, textureGetter);
                     itemModelMesher.register(item, i, inventory);
                     event.modelRegistry.putObject(inventory, model);
                 }
@@ -364,6 +411,8 @@ public class ModelGenerator {
         int damage;
         TextureAtlasSprite sprite;
         String textureName;
+
+        public boolean isBucket = false;
 
         public Item getItem() {
             return item;
