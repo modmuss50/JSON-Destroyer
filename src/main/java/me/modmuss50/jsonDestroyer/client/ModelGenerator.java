@@ -5,14 +5,10 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import me.modmuss50.jsonDestroyer.JsonDestroyer;
-import me.modmuss50.jsonDestroyer.api.ITexturedBlock;
-import me.modmuss50.jsonDestroyer.api.ITexturedBucket;
-import me.modmuss50.jsonDestroyer.api.ITexturedFluid;
-import me.modmuss50.jsonDestroyer.api.ITexturedItem;
+import me.modmuss50.jsonDestroyer.api.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.*;
@@ -28,33 +24,22 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.event.FMLLoadEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 import org.lwjgl.util.vector.Vector3f;
 
-import javax.imageio.ImageIO;
 import javax.vecmath.Matrix4f;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -200,7 +185,7 @@ public class ModelGenerator {
 
                 for (int i = 0; i < 16; i++) {
                     ModelResourceLocation location = new ModelResourceLocation(getBlockResourceLocation(fluid), "level=" + i);
-                    if(event.modelManager.getModel(location) != event.modelManager.getMissingModel()){
+                    if (event.modelManager.getModel(location) != event.modelManager.getMissingModel()) {
                         FMLLog.info("Model found @ " + location.toString() + ", this means a resource pack is overriding it or a modder is doing something bad. JSON-Destoyer will not attempt to create a model for it.");
                         continue;
                     }
@@ -367,12 +352,15 @@ public class ModelGenerator {
 
         @Override
         public List<BakedQuad> getFaceQuads(EnumFacing side) {
+            if (state.getBlock() instanceof IOpaqueBlock) {
+                return Collections.emptyList();
+            }
             ArrayList<BakedQuad> list = new ArrayList<BakedQuad>();
             BlockFaceUV uv = new BlockFaceUV(new float[]{0.0F, 0.0F, 16.0F, 16.0F}, 0);
             BlockPartFace face = new BlockPartFace(null, 0, "", uv);
             ModelRotation modelRot = ModelRotation.X0_Y0;
             boolean scale = true;
-            switch (side){
+            switch (side) {
                 case DOWN:
                     list.add(faceBakery.makeBakedQuad(new Vector3f(0.0F, 0.0F, 0.0F), new Vector3f(16.0F, 0.0F, 16.0F), face, textureAtlasSpriteHashMap.get(side), side, modelRot, null, scale, true));//down
                     break;
@@ -397,6 +385,20 @@ public class ModelGenerator {
 
         @Override
         public List<BakedQuad> getGeneralQuads() {
+            if (state.getBlock() instanceof IOpaqueBlock) {
+                ArrayList<BakedQuad> list = new ArrayList<BakedQuad>();
+                BlockFaceUV uv = new BlockFaceUV(new float[]{0.0F, 0.0F, 16.0F, 16.0F}, 0);
+                BlockPartFace face = new BlockPartFace(null, 0, "", uv);
+                ModelRotation modelRot = ModelRotation.X0_Y0;
+                boolean scale = true;
+                list.add(faceBakery.makeBakedQuad(new Vector3f(0.0F, 0.0F, 0.0F), new Vector3f(16.0F, 0.0F, 16.0F), face, textureAtlasSpriteHashMap.get(EnumFacing.DOWN), EnumFacing.DOWN, modelRot, null, scale, true));//down
+                list.add(faceBakery.makeBakedQuad(new Vector3f(0.0F, 16.0F, 0.0F), new Vector3f(16.0F, 16.0F, 16.0F), face, textureAtlasSpriteHashMap.get(EnumFacing.UP), EnumFacing.UP, modelRot, null, scale, true));//up
+                list.add(faceBakery.makeBakedQuad(new Vector3f(0.0F, 0.0F, 0.0F), new Vector3f(16.0F, 16.0F, 0.0F), face, textureAtlasSpriteHashMap.get(EnumFacing.NORTH), EnumFacing.NORTH, modelRot, null, scale, true));//north
+                list.add(faceBakery.makeBakedQuad(new Vector3f(0.0F, 0.0F, 16.0F), new Vector3f(16.0F, 16.0F, 16.0F), face, textureAtlasSpriteHashMap.get(EnumFacing.SOUTH), EnumFacing.SOUTH, modelRot, null, scale, true));//south
+                list.add(faceBakery.makeBakedQuad(new Vector3f(16.0F, 0.0F, 0.0F), new Vector3f(16.0F, 16.0F, 16.0F), face, textureAtlasSpriteHashMap.get(EnumFacing.EAST), EnumFacing.EAST, modelRot, null, scale, true));//east
+                list.add(faceBakery.makeBakedQuad(new Vector3f(0.0F, 0.0F, 0.0F), new Vector3f(0.0F, 16.0F, 16.0F), face, textureAtlasSpriteHashMap.get(EnumFacing.WEST), EnumFacing.WEST, modelRot, null, scale, true));//west
+                return list;
+            }
             return Collections.emptyList();
         }
 
