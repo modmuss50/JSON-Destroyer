@@ -146,7 +146,7 @@ public class ModelGenerator {
                         return;
                     }
 
-                    BlockModel model = new BlockModel(textureMap, block.getStateFromMeta(i));
+                    BlockModel model = new BlockModel(textureMap, block.getStateFromMeta(i).getBlock() instanceof IOpaqueBlock);
                     ModelResourceLocation modelResourceLocation = getModelResourceLocation(block.getStateFromMeta(i));
 //                    if(event.modelManager.getModel(modelResourceLocation) != event.modelManager.getMissingModel()){
 //                        FMLLog.info("Model found @ " + modelResourceLocation.toString() + ", this means a resource pack is overriding it or a modder is doing something bad. JSON-Destoyer will not attempt to create a model for it.");
@@ -342,17 +342,17 @@ public class ModelGenerator {
 
     public class BlockModel implements IFlexibleBakedModel, IPerspectiveAwareModel {
         HashMap<EnumFacing, TextureAtlasSprite> textureAtlasSpriteHashMap;
-        IBlockState state;
+        boolean isOpaque;
 
-        public BlockModel(HashMap<EnumFacing, TextureAtlasSprite> textureAtlasSpriteHashMap, IBlockState state) {
+        public BlockModel(HashMap<EnumFacing, TextureAtlasSprite> textureAtlasSpriteHashMap, boolean isOpaque) {
             this.textureAtlasSpriteHashMap = textureAtlasSpriteHashMap;
-            this.state = state;
+            this.isOpaque = isOpaque;
         }
 
 
         @Override
         public List<BakedQuad> getFaceQuads(EnumFacing side) {
-            if (state.getBlock() instanceof IOpaqueBlock) {
+            if (isOpaque) {
                 return Collections.emptyList();
             }
             ArrayList<BakedQuad> list = new ArrayList<BakedQuad>();
@@ -385,7 +385,7 @@ public class ModelGenerator {
 
         @Override
         public List<BakedQuad> getGeneralQuads() {
-            if (state.getBlock() instanceof IOpaqueBlock) {
+            if (isOpaque) {
                 ArrayList<BakedQuad> list = new ArrayList<BakedQuad>();
                 BlockFaceUV uv = new BlockFaceUV(new float[]{0.0F, 0.0F, 16.0F, 16.0F}, 0);
                 BlockPartFace face = new BlockPartFace(null, 0, "", uv);
