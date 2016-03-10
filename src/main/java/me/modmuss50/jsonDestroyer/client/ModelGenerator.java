@@ -152,8 +152,16 @@ public class ModelGenerator {
 
                     BlockModel model = new BlockModel(textureMap, block.getStateFromMeta(i).getBlock() instanceof IOpaqueBlock);
                     ModelResourceLocation modelResourceLocation = getModelResourceLocation(block.getStateFromMeta(i));
+//                    if(event.modelManager.getModel(modelResourceLocation) != event.modelManager.getMissingModel()){
+//                        FMLLog.info("Model found @ " + modelResourceLocation.toString() + ", this means a resource pack is overriding it or a modder is doing something bad. JSON-Destoyer will not attempt to create a model for it.");
+//                        continue;
+//                    }
                     event.modelRegistry.putObject(modelResourceLocation, model);
                     ModelResourceLocation inventory = getBlockinventoryResourceLocation(block);
+//                    if(event.modelManager.getModel(inventory) != event.modelManager.getMissingModel()){
+//                        FMLLog.info("Model found @ " + inventory.toString() + ", this means a resource pack is overriding it or a modder is doing something bad. JSON-Destoyer will not attempt to create a model for it.");
+//                        continue;
+//                    }
                     event.modelRegistry.putObject(inventory, model);
                     itemModelMesher.register(Item.getItemFromBlock(block), i, inventory);
                     event.modelRegistry.putObject(modelResourceLocation, model);
@@ -162,6 +170,10 @@ public class ModelGenerator {
             } else if (object instanceof ITexturedFluid && object instanceof BlockFluidBase) {
                 final BlockFluidBase fluid = (BlockFluidBase) object;
                 final ModelResourceLocation fluidLocation = new ModelResourceLocation(fluid.getFluid().getFlowing(), "fluid");
+//                if(event.modelManager.getModel(fluidLocation) != event.modelManager.getMissingModel()){
+//                    FMLLog.info("Model found @ " + fluidLocation.toString() + ", this means a resource pack is overriding it or a modder is doing something bad. JSON-Destoyer will not attempt to create a model for it.");
+//                    continue;
+//                }
                 Item fluidItem = Item.getItemFromBlock(fluid);
                 ModelBakery.addVariantName(fluidItem);
                 ModelLoader.setCustomMeshDefinition(fluidItem, new ItemMeshDefinition() {
@@ -192,6 +204,10 @@ public class ModelGenerator {
                     event.modelRegistry.putObject(location, bakedModel);
                 }
                 ModelResourceLocation inventoryLocation = new ModelResourceLocation(getBlockResourceLocation(fluid), "inventory");
+//                if(event.modelManager.getModel(inventoryLocation) != event.modelManager.getMissingModel()){
+//                    FMLLog.info("Model found @ " + inventoryLocation.toString() + ", this means a resource pack is overriding it or a modder is doing something bad. JSON-Destoyer will not attempt to create a model for it.");
+//                    continue;
+//                }
                 ModelFluid modelFluid = new ModelFluid(fluid.getFluid());
                 Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
                     public TextureAtlasSprite apply(ResourceLocation location) {
@@ -226,6 +242,10 @@ public class ModelGenerator {
                             inventory = item.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0);
                         }
                     }
+//                    if(event.modelManager.getModel(inventory) != event.modelManager.getMissingModel()){
+//                        FMLLog.info("Model found @ " + inventory.toString() + ", this means a resource pack is overriding it or a modder is doing something bad. JSON-Destoyer will not attempt to create a model for it.");
+//                        continue;
+//                    }
 
                     final TextureAtlasSprite finalTexture = texture;
                     Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
@@ -239,10 +259,6 @@ public class ModelGenerator {
                     IBakedModel model = itemLayerModel.bake(ItemLayerModel.instance.getDefaultState(), DefaultVertexFormats.ITEM, textureGetter);
                     itemModelMesher.register(item, i, inventory);
                     event.modelRegistry.putObject(inventory, model);
-                    if (iTexturedItem.getMaxMeta() != 1) {
-                        itemModelMesher.register(item, i, getItemInventoryResourceLocation(item));
-                        event.modelRegistry.putObject(getItemInventoryResourceLocation(item), model);
-                    }
                 }
             } else if (object instanceof Item && object instanceof ITexturedBucket) {
                 ITexturedBucket iTexturedBucket = (ITexturedBucket) object;
@@ -255,6 +271,10 @@ public class ModelGenerator {
                             inventory = item.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0);
                         }
                     }
+//                    if(event.modelManager.getModel(inventory) != event.modelManager.getMissingModel()){
+//                        FMLLog.info("Model found @ " + inventory.toString() + ", this means a resource pack is overriding it or a modder is doing something bad. JSON-Destoyer will not attempt to create a model for it.");
+//                        continue;
+//                    }
                     Function<ResourceLocation, TextureAtlasSprite> textureGetter;
                     textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
                         public TextureAtlasSprite apply(ResourceLocation location) {
