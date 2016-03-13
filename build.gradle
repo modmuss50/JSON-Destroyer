@@ -9,9 +9,20 @@ buildscript {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+		maven {
+            name = "modmuss50"
+            url = "http://maven.modmuss50.me/"
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+    }
+}
+
+repositories {
+    maven {
+        name = "Modmuss50"
+        url = "http://maven.modmuss50.me/"
     }
 }
 
@@ -31,8 +42,8 @@ if (ENV.BUILD_NUMBER) {
 }
 
 minecraft {
-    version = "1.8.9-11.15.0.1709"
-    mappings = 'snapshot_20160119'
+    version = "1.9-12.16.0.0-1.9"
+    mappings = "snapshot_20160312"
     runDir = "run"
 }
 
