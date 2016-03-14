@@ -230,11 +230,12 @@ public class ModelGenerator {
                     inventory = getItemInventoryResourceLocation(item);
 
                     //TODO 1.9
-//                    if (iTexturedItem.getMaxMeta() != 1) {
-//                        if (item.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0) != null) {
-//                            inventory = item.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0);
-//                        }
-//                    }
+                    if (iTexturedItem.getMaxMeta() != 1) {
+                        if (iTexturedItem.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0) != null) {
+                            inventory = iTexturedItem.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0);
+                            ModelLoader.registerItemVariants(item, inventory);
+                        }
+                    }
 
 
                     final TextureAtlasSprite finalTexture = texture;
@@ -256,12 +257,12 @@ public class ModelGenerator {
                 for (int i = 0; i < iTexturedBucket.getMaxMeta(); i++) {
                     ModelResourceLocation inventory;
                     inventory = getItemInventoryResourceLocation(item);
-                    if (iTexturedBucket.getMaxMeta() != 1) {
-                        //TODO 1.9
+//                    if (iTexturedBucket.getMaxMeta() != 1) {
+//                        //TODO 1.9
 //                        if (item.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0) != null) {
 //                            inventory = item.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0);
 //                        }
-                    }
+//                    }
                     Function<ResourceLocation, TextureAtlasSprite> textureGetter;
                     textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
                         public TextureAtlasSprite apply(ResourceLocation location) {
