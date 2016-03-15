@@ -142,18 +142,13 @@ public class ModelGenerator {
                         return;
                     }
 
-                    BlockModel model = new BlockModel(textureMap, block.getStateFromMeta(i).getBlock() instanceof IOpaqueBlock);
+                    ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> map = IPerspectiveAwareModel.MapWrapper.getTransforms(ModelRotation.X0_Y0);
+                    BlockModel model1 = new BlockModel(textureMap, block.getStateFromMeta(i).getBlock() instanceof IOpaqueBlock, map);
+                    IBakedModel model = new IPerspectiveAwareModel.MapWrapper(model1, ModelRotation.X0_Y0);
                     ModelResourceLocation modelResourceLocation = getModelResourceLocation(block.getStateFromMeta(i));
-//                    if(event.modelManager.getModel(modelResourceLocation) != event.modelManager.getMissingModel()){
-//                        FMLLog.info("Model found @ " + modelResourceLocation.toString() + ", this means a resource pack is overriding it or a modder is doing something bad. JSON-Destoyer will not attempt to create a model for it.");
-//                        continue;
-//                    }
+
                     event.getModelRegistry().putObject(modelResourceLocation, model);
                     ModelResourceLocation inventory = getBlockinventoryResourceLocation(block);
-//                    if(event.modelManager.getModel(inventory) != event.modelManager.getMissingModel()){
-//                        FMLLog.info("Model found @ " + inventory.toString() + ", this means a resource pack is overriding it or a modder is doing something bad. JSON-Destoyer will not attempt to create a model for it.");
-//                        continue;
-//                    }
                     event.getModelRegistry().putObject(inventory, model);
                     itemModelMesher.register(Item.getItemFromBlock(block), i, inventory);
                     event.getModelRegistry().putObject(modelResourceLocation, model);
@@ -162,10 +157,7 @@ public class ModelGenerator {
             } else if (object instanceof ITexturedFluid && object instanceof BlockFluidBase) {
                 final BlockFluidBase fluid = (BlockFluidBase) object;
                 final ModelResourceLocation fluidLocation = new ModelResourceLocation(fluid.getFluid().getFlowing(), "fluid");
-//                if(event.modelManager.getModel(fluidLocation) != event.modelManager.getMissingModel()){
-//                    FMLLog.info("Model found @ " + fluidLocation.toString() + ", this means a resource pack is overriding it or a modder is doing something bad. JSON-Destoyer will not attempt to create a model for it.");
-//                    continue;
-//                }
+
                 Item fluidItem = Item.getItemFromBlock(fluid);
                 ModelBakery.registerItemVariants(fluidItem);
                 ModelLoader.setCustomMeshDefinition(fluidItem, new ItemMeshDefinition() {
@@ -181,10 +173,6 @@ public class ModelGenerator {
 
                 for (int i = 0; i < 16; i++) {
                     ModelResourceLocation location = new ModelResourceLocation(getBlockResourceLocation(fluid), "level=" + i);
-                    if (event.getModelManager().getModel(location) != event.getModelManager().getMissingModel()) {
-                        FMLLog.info("Model found @ " + location.toString() + ", this means a resource pack is overriding it or a modder is doing something bad. JSON-Destoyer will not attempt to create a model for it.");
-                        continue;
-                    }
                     ModelFluid modelFluid = new ModelFluid(fluid.getFluid());
                     Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
                         public TextureAtlasSprite apply(ResourceLocation location) {
@@ -196,10 +184,6 @@ public class ModelGenerator {
                     event.getModelRegistry().putObject(location, bakedModel);
                 }
                 ModelResourceLocation inventoryLocation = new ModelResourceLocation(getBlockResourceLocation(fluid), "inventory");
-//                if(event.modelManager.getModel(inventoryLocation) != event.modelManager.getMissingModel()){
-//                    FMLLog.info("Model found @ " + inventoryLocation.toString() + ", this means a resource pack is overriding it or a modder is doing something bad. JSON-Destoyer will not attempt to create a model for it.");
-//                    continue;
-//                }
                 ModelFluid modelFluid = new ModelFluid(fluid.getFluid());
                 Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
                     public TextureAtlasSprite apply(ResourceLocation location) {
@@ -332,13 +316,15 @@ public class ModelGenerator {
 
     }
 
-    public class BlockModel implements IBakedModel, IPerspectiveAwareModel {
+    public class BlockModel implements IPerspectiveAwareModel {
         HashMap<EnumFacing, TextureAtlasSprite> textureAtlasSpriteHashMap;
         boolean isOpaque;
+        ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transforms;
 
-        public BlockModel(HashMap<EnumFacing, TextureAtlasSprite> textureAtlasSpriteHashMap, boolean isOpaque) {
+        public BlockModel(HashMap<EnumFacing, TextureAtlasSprite> textureAtlasSpriteHashMap, boolean isOpaque, ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transforms) {
             this.textureAtlasSpriteHashMap = textureAtlasSpriteHashMap;
             this.isOpaque = isOpaque;
+            this.transforms = transforms;
         }
 
 
@@ -415,10 +401,7 @@ public class ModelGenerator {
 
         @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-            if (cameraTransformType == ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND)
-                return Pair.of(IBakedModel.class.cast(this), ThirdPerson);
-
-            return Pair.of(IBakedModel.class.cast(this), null);
+            return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transforms, cameraTransformType);
         }
 
     }
@@ -473,7 +456,8 @@ public class ModelGenerator {
             if (transforms.isEmpty()) {
                 return ret;
             }
-            return new IPerspectiveAwareModel.MapWrapper(ret, transforms);
+            return ret;
+           // return new IPerspectiveAwareModel.MapWrapper(ret, transforms);
         }
     }
 
@@ -523,9 +507,17 @@ public class ModelGenerator {
         }
 
         @Override
-        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-            Pair<? extends IBakedModel, Matrix4f> pair = IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transforms, cameraTransformType);
-            return pair;
+        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType type) {
+//            Pair<? extends IBakedModel, Matrix4f> pair = IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transforms, type);
+//            if(type == ItemCameraTransforms.TransformType.GUI && !isCulled && pair.getRight() == null)
+//            {
+//                return Pair.of(otherModel, null);
+//            }
+//            else if(type != ItemCameraTransforms.TransformType.GUI && isCulled)
+//            {
+//                return Pair.of(otherModel, pair.getRight());
+//            }
+            return Pair.of(this, ForgeHooksClient.getMatrix(ItemCameraTransforms.DEFAULT.getTransform(type)));
         }
     }
 
