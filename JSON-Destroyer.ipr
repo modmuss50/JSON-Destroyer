@@ -57,6 +57,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/JSON-Destroyer.iml" filepath="$PROJECT_DIR$/JSON-Destroyer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../JustEnoughItems/JustEnoughItems.iml" filepath="$PROJECT_DIR$/../JustEnoughItems/JustEnoughItems.iml" />
       <module fileurl="file://$PROJECT_DIR$/../RebornCore-1.9/RebornCore-1.9.iml" filepath="$PROJECT_DIR$/../RebornCore-1.9/RebornCore-1.9.iml" />
       <module fileurl="file://$PROJECT_DIR$/../TechReborn/TechReborn.iml" filepath="$PROJECT_DIR$/../TechReborn/TechReborn.iml" />
     </modules>
@@ -69,6 +70,7 @@
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../JustEnoughItems" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../RebornCore-1.9" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../TechReborn" vcs="Git" />
   </component>
