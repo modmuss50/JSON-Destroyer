@@ -44,7 +44,6 @@ import java.util.List;
 public class ModelGenerator {
 
     private FaceBakery faceBakery = new FaceBakery();
-    private final Matrix4f ThirdPerson = ForgeHooksClient.getMatrix(new ItemTransformVec3f(new Vector3f(3.3F, 1, -0.3F), new Vector3f(0F, 0.1F, -0.15F), new Vector3f(0.35F, 0.35F, 0.35F)));
 
     private JsonDestroyer jsonDestroyer;
 
@@ -143,8 +142,8 @@ public class ModelGenerator {
                     }
 
                     ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> map = IPerspectiveAwareModel.MapWrapper.getTransforms(ModelRotation.X0_Y0);
-                    BlockModel model1 = new BlockModel(textureMap, block.getStateFromMeta(i).getBlock() instanceof IOpaqueBlock, map);
-                    IBakedModel model = new IPerspectiveAwareModel.MapWrapper(model1, ModelRotation.X0_Y0);
+                    BlockModel model = new BlockModel(textureMap, block.getStateFromMeta(i).getBlock() instanceof IOpaqueBlock, map);
+                    //IBakedModel model = new IPerspectiveAwareModel.MapWrapper(model1, ModelRotation.X0_Y0);
                     ModelResourceLocation modelResourceLocation = getModelResourceLocation(block.getStateFromMeta(i));
 
                     event.getModelRegistry().putObject(modelResourceLocation, model);
@@ -399,9 +398,20 @@ public class ModelGenerator {
         }
 
 
+        //TODO rewrite this so its not a using old ways
         @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-            return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transforms, cameraTransformType);
+
+            if (cameraTransformType == ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND || cameraTransformType == ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND)
+                return Pair.of(IBakedModel.class.cast(this), ForgeHooksClient.getMatrix(new ItemTransformVec3f(new Vector3f(3.3F, 1, -0.3F), new Vector3f(0F, 0.1F, -0.15F), new Vector3f(0.35F, 0.35F, 0.35F))));
+
+            if (cameraTransformType == ItemCameraTransforms.TransformType.GUI)
+                return Pair.of(IBakedModel.class.cast(this), ForgeHooksClient.getMatrix(new ItemTransformVec3f(new Vector3f(3.45F, 0.7F, 2.8F), new Vector3f(0F, 0.0F, 0.0F), new Vector3f(0.6F, 0.6F, 0.6F))));
+
+            if (cameraTransformType == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND || cameraTransformType == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND)
+                return Pair.of(IBakedModel.class.cast(this), ForgeHooksClient.getMatrix(new ItemTransformVec3f(new Vector3f(0F, 0, 0F), new Vector3f(0F, 0.0F, 0F), new Vector3f(0.35F, 0.35F, 0.35F))));
+
+            return Pair.of(IBakedModel.class.cast(this), null);
         }
 
     }
