@@ -30,7 +30,7 @@ apply plugin: 'maven-publish'
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
-version = "1.4"
+version = "2.0"
 
 def ENV = System.getenv()
 if (ENV.BUILD_NUMBER) {
@@ -43,7 +43,7 @@ minecraft {
     runDir = "run"
 }
 
-group = 'JSON-Destroyer'
+group = 'JSON-Destroyer-1.9'
 
 //I keep this becuase it will make shading easy
 task deobfJar(type: Jar) {
