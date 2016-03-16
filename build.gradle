@@ -49,26 +49,10 @@ minecraft {
 
 group = 'JSON-Destroyer'
 
-dependencies {
-  //Nope
-}
-
-//I keep this becuase it will make shading easy
-task deobfJar(type: Jar) {
-    from sourceSets.main.output
-    classifier = 'dev'
-}
-
 jar {
     exclude "**/*.psd"
     classifier = 'universal'
 }
-
-artifacts {
-    archives deobfJar
-}
-
-build.dependsOn deobfJar
 
 uploadArchives {
     repositories {
