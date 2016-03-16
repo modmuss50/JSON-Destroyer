@@ -45,10 +45,39 @@ minecraft {
 
 group = 'JSON-Destroyer'
 
+//I keep this becuase it will make shading easy
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'dev'
+}
+
+jar {
+    exclude "**/*.psd"
+    classifier = 'universal'
+}
+
+artifacts {
+    archives deobfJar
+}
+
+build.dependsOn deobfJar
+
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: "file:///var/www/maven/")
+            if (project.hasProperty('mavenPass'))
+        {
+			println 'Uploading to remote Maven Repo'
+            repository(url: "http://mavenupload.modmuss50.me/") {
+                authentication(userName: "buildslave", password: project.getProperty('mavenPass'))
+            }
+        }
+        else
+        { 
+			//this is when the build is executed on the master node
+			println 'Uploading to local Maven Repo'
+           repository(url: "file:///var/www/maven/")
+        }
             pom {
                 groupId = "JSON-Destroyer"
                 version = project.version
