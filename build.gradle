@@ -31,8 +31,8 @@ apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
 //Use java 6
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
 
 version = "1.4"
 
@@ -45,24 +45,14 @@ minecraft {
     version = "1.9-12.16.0.0-1.9"
     mappings = "snapshot_20160316"
     runDir = "run"
-	useDepAts = true
 }
 
 group = 'JSON-Destroyer'
-
-dependencies {
-  //Nope
-}
 
 //I keep this becuase it will make shading easy
 task deobfJar(type: Jar) {
     from sourceSets.main.output
     classifier = 'dev'
-}
-
-jar {
-    exclude "**/*.psd"
-    classifier = 'universal'
 }
 
 artifacts {
