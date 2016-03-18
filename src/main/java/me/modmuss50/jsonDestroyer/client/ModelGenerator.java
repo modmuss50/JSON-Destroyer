@@ -229,7 +229,7 @@ public class ModelGenerator {
                     };
                     ImmutableList.Builder<ResourceLocation> builder = ImmutableList.builder();
                     builder.add(new ResourceLocation(itemIconInfo.textureName));
-                    CustomModel itemLayerModel = new CustomModel(builder.build());
+                    ItemLayerModel itemLayerModel = new ItemLayerModel(builder.build());
                     IBakedModel model = itemLayerModel.bake(ItemLayerModel.instance.getDefaultState(), DefaultVertexFormats.ITEM, textureGetter);
                     itemModelMesher.register(item, i, inventory);
                     event.getModelRegistry().putObject(inventory, model);
@@ -443,33 +443,6 @@ public class ModelGenerator {
 
     }
 
-    public class CustomModel extends ItemLayerModel {
-
-        ImmutableList<ResourceLocation> textures;
-
-        public CustomModel(ImmutableList<ResourceLocation> textures) {
-            super(textures);
-            this.textures = textures;
-        }
-
-        @Override
-        public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-            ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-            Optional<TRSRTransformation> transform = state.apply(Optional.<IModelPart>absent());
-            for (int i = 0; i < textures.size(); i++) {
-                TextureAtlasSprite sprite = bakedTextureGetter.apply(textures.get(i));
-                builder.addAll(getQuadsForSprite(i, sprite, format, transform));
-            }
-            TextureAtlasSprite particle = bakedTextureGetter.apply(textures.isEmpty() ? new ResourceLocation("missingno") : textures.get(0));
-            ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transforms = IPerspectiveAwareModel.MapWrapper.getTransforms(state);
-            IBakedModel ret = new CustomBakedModel(builder.build(), particle, transforms, null);
-            if (transforms.isEmpty()) {
-                return ret;
-            }
-            return ret;
-           // return new IPerspectiveAwareModel.MapWrapper(ret, transforms);
-        }
-    }
 
     public class CustomBakedModel implements IPerspectiveAwareModel {
         private final ImmutableList<BakedQuad> quads;
