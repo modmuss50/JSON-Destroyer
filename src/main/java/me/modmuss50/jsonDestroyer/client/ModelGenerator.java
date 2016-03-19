@@ -406,7 +406,7 @@ public class ModelGenerator {
                 return Pair.of(IBakedModel.class.cast(this), ForgeHooksClient.getMatrix(new ItemTransformVec3f(new Vector3f(3.3F, 1, -0.3F), new Vector3f(0F, 0.1F, -0.15F), new Vector3f(0.35F, 0.35F, 0.35F))));
 
             if (cameraTransformType == ItemCameraTransforms.TransformType.GUI)
-                return Pair.of(IBakedModel.class.cast(this), ForgeHooksClient.getMatrix(new ItemTransformVec3f(new Vector3f(3.45F, 0.7F, 2.8F), new Vector3f(0F, 0.0F, 0.0F), new Vector3f(0.6F, 0.6F, 0.6F))));
+                return Pair.of(IBakedModel.class.cast(this), ForgeHooksClient.getMatrix(new ItemTransformVec3f(new Vector3f(3.5F, 1F, 2.65F), new Vector3f(0F, 0.0F, 0.0F), new Vector3f(0.63F, 0.63F, 0.63F))));
 
             if (cameraTransformType == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND || cameraTransformType == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND)
                 return Pair.of(IBakedModel.class.cast(this), ForgeHooksClient.getMatrix(new ItemTransformVec3f(new Vector3f(0F, 0, 0F), new Vector3f(0F, 0.0F, 0F), new Vector3f(0.35F, 0.35F, 0.35F))));
