@@ -411,6 +411,9 @@ public class ModelGenerator {
             if (cameraTransformType == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND || cameraTransformType == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND)
                 return Pair.of(IBakedModel.class.cast(this), ForgeHooksClient.getMatrix(new ItemTransformVec3f(new Vector3f(0F, 0, 0F), new Vector3f(0F, 0.0F, 0F), new Vector3f(0.35F, 0.35F, 0.35F))));
 
+            if (cameraTransformType == ItemCameraTransforms.TransformType.GROUND)
+                return Pair.of(IBakedModel.class.cast(this), ForgeHooksClient.getMatrix(new ItemTransformVec3f(new Vector3f(0F, 0, 0F), new Vector3f(0F, 0.0F, 0F), new Vector3f(0.25F, 0.25F, 0.25F))));
+
             return Pair.of(IBakedModel.class.cast(this), null);
         }
 
