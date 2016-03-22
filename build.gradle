@@ -22,9 +22,9 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
-//Use java 6
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+//Use java 8
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 version = "2.0"
 

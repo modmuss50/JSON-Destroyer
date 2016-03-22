@@ -48,11 +48,11 @@ public class ModelGenerator {
 
     private JsonDestroyer jsonDestroyer;
 
-    public ArrayList<BlockIconInfo> blockIconInfoList = new ArrayList<BlockIconInfo>();
+    public ArrayList<BlockIconInfo> blockIconInfoList = new ArrayList<>();
 
-    public HashMap<BlockIconInfo, TextureAtlasSprite> blockIconList = new HashMap<BlockIconInfo, TextureAtlasSprite>();
-    public HashMap<BlockFluidBase, TextureAtlasSprite> fluidIcons = new HashMap<BlockFluidBase, TextureAtlasSprite>();
-    public List<ItemIconInfo> itemIcons = new ArrayList<ItemIconInfo>();
+    public HashMap<BlockIconInfo, TextureAtlasSprite> blockIconList = new HashMap<>();
+    public HashMap<BlockFluidBase, TextureAtlasSprite> fluidIcons = new HashMap<>();
+    public List<ItemIconInfo> itemIcons = new ArrayList<>();
 
     public ModelGenerator(JsonDestroyer jsonDestroyer) {
         this.jsonDestroyer = jsonDestroyer;
@@ -129,7 +129,7 @@ public class ModelGenerator {
                 ITexturedBlock textureProvdier = (ITexturedBlock) object;
                 Block block = (Block) object;
                 for (int i = 0; i < textureProvdier.amountOfStates(); i++) {
-                    HashMap<EnumFacing, TextureAtlasSprite> textureMap = new HashMap<EnumFacing, TextureAtlasSprite>();
+                    HashMap<EnumFacing, TextureAtlasSprite> textureMap = new HashMap<>();
                     for (EnumFacing side : EnumFacing.VALUES) {
                         for (BlockIconInfo iconInfo : blockIconInfoList) {
                             if (iconInfo.getBlock() == block && iconInfo.getMeta() == i && iconInfo.getSide() == side) {
@@ -144,7 +144,6 @@ public class ModelGenerator {
 
                     ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> map = IPerspectiveAwareModel.MapWrapper.getTransforms(ModelRotation.X0_Y0);
                     BlockModel model = new BlockModel(textureMap, block.getStateFromMeta(i).getBlock() instanceof IOpaqueBlock, map);
-                    //IBakedModel model = new IPerspectiveAwareModel.MapWrapper(model1, ModelRotation.X0_Y0);
                     ModelResourceLocation modelResourceLocation = getModelResourceLocation(block.getStateFromMeta(i));
 
                     event.getModelRegistry().putObject(modelResourceLocation, model);
@@ -160,11 +159,7 @@ public class ModelGenerator {
 
                 Item fluidItem = Item.getItemFromBlock(fluid);
                 ModelBakery.registerItemVariants(fluidItem);
-                ModelLoader.setCustomMeshDefinition(fluidItem, new ItemMeshDefinition() {
-                    public ModelResourceLocation getModelLocation(ItemStack stack) {
-                        return fluidLocation;
-                    }
-                });
+                ModelLoader.setCustomMeshDefinition(fluidItem, stack -> fluidLocation);
                 ModelLoader.setCustomStateMapper(fluid, new StateMapperBase() {
                     protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
                         return fluidLocation;
@@ -174,22 +169,14 @@ public class ModelGenerator {
                 for (int i = 0; i < 16; i++) {
                     ModelResourceLocation location = new ModelResourceLocation(getBlockResourceLocation(fluid), "level=" + i);
                     ModelFluid modelFluid = new ModelFluid(fluid.getFluid());
-                    Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
-                        public TextureAtlasSprite apply(ResourceLocation location) {
-                            return fluidIcons.get(fluid);
-                        }
-                    };
+                    Function<ResourceLocation, TextureAtlasSprite> textureGetter = location1 -> fluidIcons.get(fluid);
                     IBakedModel bakedModel = modelFluid.bake(modelFluid.getDefaultState(), DefaultVertexFormats.BLOCK, textureGetter);
 
                     event.getModelRegistry().putObject(location, bakedModel);
                 }
                 ModelResourceLocation inventoryLocation = new ModelResourceLocation(getBlockResourceLocation(fluid), "inventory");
                 ModelFluid modelFluid = new ModelFluid(fluid.getFluid());
-                Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
-                    public TextureAtlasSprite apply(ResourceLocation location) {
-                        return fluidIcons.get(fluid);
-                    }
-                };
+                Function<ResourceLocation, TextureAtlasSprite> textureGetter = location -> fluidIcons.get(fluid);
                 IBakedModel bakedModel = modelFluid.bake(modelFluid.getDefaultState(), DefaultVertexFormats.ITEM, textureGetter);
 
                 event.getModelRegistry().putObject(inventoryLocation, bakedModel);
@@ -213,7 +200,6 @@ public class ModelGenerator {
                     ModelResourceLocation inventory;
                     inventory = getItemInventoryResourceLocation(item);
 
-                    //TODO 1.9
                     if (iTexturedItem.getMaxMeta() != 1) {
                         if (iTexturedItem.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0) != null) {
                             inventory = iTexturedItem.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0);
@@ -223,11 +209,7 @@ public class ModelGenerator {
 
 
                     final TextureAtlasSprite finalTexture = texture;
-                    Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
-                        public TextureAtlasSprite apply(ResourceLocation location) {
-                            return finalTexture;
-                        }
-                    };
+                    Function<ResourceLocation, TextureAtlasSprite> textureGetter = location -> finalTexture;
                     ImmutableList.Builder<ResourceLocation> builder = ImmutableList.builder();
                     builder.add(new ResourceLocation(itemIconInfo.textureName));
                     ItemLayerModel itemLayerModel = new ItemLayerModel(builder.build());
@@ -248,11 +230,7 @@ public class ModelGenerator {
 //                        }
 //                    }
                     Function<ResourceLocation, TextureAtlasSprite> textureGetter;
-                    textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
-                        public TextureAtlasSprite apply(ResourceLocation location) {
-                            return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
-                        }
-                    };
+                    textureGetter = location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
                     ModelDynBucket modelDynBucket = new ModelDynBucket(new ResourceLocation("forge:items/bucket_base"), new ResourceLocation("forge:items/bucket_fluid"), new ResourceLocation("forge:items/bucket_cover"), iTexturedBucket.getFluid(i), iTexturedBucket.isGas(i));
 
                     IBakedModel model = modelDynBucket.bake(ItemLayerModel.INSTANCE.getDefaultState(), DefaultVertexFormats.ITEM, textureGetter);
@@ -265,7 +243,7 @@ public class ModelGenerator {
 
     @SideOnly(Side.CLIENT)
     public static ModelResourceLocation getModelResourceLocation(IBlockState state) {
-        return new ModelResourceLocation((ResourceLocation) Block.blockRegistry.getNameForObject(state.getBlock()), (new DefaultStateMapper()).getPropertyString(state.getProperties()));
+        return new ModelResourceLocation(Block.blockRegistry.getNameForObject(state.getBlock()), (new DefaultStateMapper()).getPropertyString(state.getProperties()));
     }
 
     @SideOnly(Side.CLIENT)
@@ -330,7 +308,7 @@ public class ModelGenerator {
 
         @Override
         public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
-            ArrayList<BakedQuad> list = new ArrayList<BakedQuad>();
+            ArrayList<BakedQuad> list = new ArrayList<>();
             BlockFaceUV uv = new BlockFaceUV(new float[]{0.0F, 0.0F, 16.0F, 16.0F}, 0);
             BlockPartFace face = new BlockPartFace(null, 0, "", uv);
             ModelRotation modelRot = ModelRotation.X0_Y0;
@@ -446,67 +424,4 @@ public class ModelGenerator {
         }
 
     }
-
-
-    public class CustomBakedModel implements IPerspectiveAwareModel {
-        private final ImmutableList<BakedQuad> quads;
-        private final TextureAtlasSprite particle;
-        private final ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transforms;
-        private final IBakedModel otherModel;
-        private final boolean isCulled;
-
-        public CustomBakedModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transforms, IBakedModel otherModel)
-        {
-            this.quads = quads;
-            this.particle = particle;
-            this.transforms = transforms;
-            if(otherModel != null)
-            {
-                this.otherModel = otherModel;
-                this.isCulled = true;
-            }
-            else
-            {
-                ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-                for(BakedQuad quad : quads)
-                {
-                    if(quad.getFace() == EnumFacing.SOUTH)
-                    {
-                        builder.add(quad);
-                    }
-                }
-                this.otherModel = new CustomBakedModel(builder.build(), particle, transforms, this);
-                isCulled = false;
-            }
-        }
-
-        public boolean isAmbientOcclusion() { return true; }
-        public boolean isGui3d() { return false; }
-        public boolean isBuiltInRenderer() { return false; }
-        public TextureAtlasSprite getParticleTexture() { return particle; }
-        public ItemCameraTransforms getItemCameraTransforms() { return ItemCameraTransforms.DEFAULT; }
-        public ItemOverrideList getOverrides() { return ItemOverrideList.NONE; }
-
-        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
-        {
-            if(side == null) return quads;
-            return ImmutableList.of();
-        }
-
-        @Override
-        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType type) {
-//            Pair<? extends IBakedModel, Matrix4f> pair = IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transforms, type);
-//            if(type == ItemCameraTransforms.TransformType.GUI && !isCulled && pair.getRight() == null)
-//            {
-//                return Pair.of(otherModel, null);
-//            }
-//            else if(type != ItemCameraTransforms.TransformType.GUI && isCulled)
-//            {
-//                return Pair.of(otherModel, pair.getRight());
-//            }
-            return Pair.of(this, ForgeHooksClient.getMatrix(ItemCameraTransforms.DEFAULT.getTransform(type)));
-        }
-    }
-
-
 }
