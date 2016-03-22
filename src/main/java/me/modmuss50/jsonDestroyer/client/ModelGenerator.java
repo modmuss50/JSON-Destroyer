@@ -26,6 +26,7 @@ import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.*;
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -230,7 +231,7 @@ public class ModelGenerator {
                     ImmutableList.Builder<ResourceLocation> builder = ImmutableList.builder();
                     builder.add(new ResourceLocation(itemIconInfo.textureName));
                     ItemLayerModel itemLayerModel = new ItemLayerModel(builder.build());
-                    IBakedModel model = itemLayerModel.bake(ItemLayerModel.instance.getDefaultState(), DefaultVertexFormats.ITEM, textureGetter);
+                    IBakedModel model = itemLayerModel.bake(ItemLayerModel.INSTANCE.getDefaultState(), DefaultVertexFormats.ITEM, textureGetter);
                     itemModelMesher.register(item, i, inventory);
                     event.getModelRegistry().putObject(inventory, model);
                 }
@@ -254,7 +255,7 @@ public class ModelGenerator {
                     };
                     ModelDynBucket modelDynBucket = new ModelDynBucket(new ResourceLocation("forge:items/bucket_base"), new ResourceLocation("forge:items/bucket_fluid"), new ResourceLocation("forge:items/bucket_cover"), iTexturedBucket.getFluid(i), iTexturedBucket.isGas(i));
 
-                    IBakedModel model = modelDynBucket.bake(ItemLayerModel.instance.getDefaultState(), DefaultVertexFormats.ITEM, textureGetter);
+                    IBakedModel model = modelDynBucket.bake(ItemLayerModel.INSTANCE.getDefaultState(), DefaultVertexFormats.ITEM, textureGetter);
                     itemModelMesher.register(item, i, inventory);
                     event.getModelRegistry().putObject(inventory, model);
                 }
