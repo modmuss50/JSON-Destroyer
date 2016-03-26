@@ -1,7 +1,6 @@
 package me.modmuss50.jsonDestroyer.client;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import me.modmuss50.jsonDestroyer.JsonDestroyer;
@@ -9,7 +8,6 @@ import me.modmuss50.jsonDestroyer.api.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.block.statemap.DefaultStateMapper;
@@ -17,7 +15,6 @@ import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -28,7 +25,6 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -38,7 +34,6 @@ import org.lwjgl.util.vector.Vector3f;
 
 import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -61,7 +56,7 @@ public class ModelGenerator {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void textureStitch(TextureStitchEvent.Pre event) {
-        TextureMap textureMap = event.map;
+        TextureMap textureMap = event.getMap();
         for (Object object : jsonDestroyer.objectsToDestroy) {
             if (object instanceof Block && object instanceof ITexturedBlock) {
                 ITexturedBlock blockTextureProvider = (ITexturedBlock) object;
