@@ -399,28 +399,8 @@ public class ModelGenerator {
         public ItemOverrideList getOverrides() {
             return ItemOverrideList.NONE;
         }
-
-
-        //TODO rewrite this so its not a using old ways
+        
         @Override
-//        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-//
-//            if (cameraTransformType == ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND || cameraTransformType == ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND)
-//                return Pair.of(IBakedModel.class.cast(this), ForgeHooksClient.getMatrix(new ItemTransformVec3f(new Vector3f(3.3F, 0, -3.3F), new Vector3f(0F, 0.1F, -0.15F), new Vector3f(0.35F, 0.35F, 0.35F))));
-//
-//            if (cameraTransformType == ItemCameraTransforms.TransformType.GUI)
-//                return Pair.of(IBakedModel.class.cast(this), ForgeHooksClient.getMatrix(new ItemTransformVec3f(new Vector3f(3.5F, 1F, 2.65F), new Vector3f(0F, 0.0F, 0.0F), new Vector3f(0.63F, 0.63F, 0.63F))));
-//
-//            if (cameraTransformType == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND || cameraTransformType == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND)
-//                return Pair.of(IBakedModel.class.cast(this), ForgeHooksClient.getMatrix(new ItemTransformVec3f(new Vector3f(0F, 0F, 0F), new Vector3f(0F, 0.0F, 0F), new Vector3f(0.35F, 0.35F, 0.35F))));
-//
-//            if (cameraTransformType == ItemCameraTransforms.TransformType.GROUND)
-//                return Pair.of(IBakedModel.class.cast(this), ForgeHooksClient.getMatrix(new ItemTransformVec3f(new Vector3f(0F, 0, 0F), new Vector3f(0F, 0.0F, 0F), new Vector3f(0.25F, 0.25F, 0.25F))));
-//
-//            return Pair.of(IBakedModel.class.cast(this), null);
-//        }
-
-
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
             Pair<? extends IBakedModel, Matrix4f> pair = IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transforms, cameraTransformType);
             return Pair.of(this, pair.getRight());
