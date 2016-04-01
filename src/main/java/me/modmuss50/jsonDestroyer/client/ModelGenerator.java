@@ -61,6 +61,9 @@ public class ModelGenerator {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void textureStitch(TextureStitchEvent.Pre event) {
+        blockIconInfoList.clear();
+        fluidIcons.clear();
+        itemIcons.clear();
         TextureMap textureMap = event.getMap();
         for (Object object : jsonDestroyer.objectsToDestroy) {
             if (object instanceof Block && object instanceof ITexturedBlock) {
