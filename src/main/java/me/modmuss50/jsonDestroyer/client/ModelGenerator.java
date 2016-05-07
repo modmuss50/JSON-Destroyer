@@ -270,22 +270,22 @@ public class ModelGenerator {
 
     @SideOnly(Side.CLIENT)
     public static ModelResourceLocation getModelResourceLocation(IBlockState state) {
-        return new ModelResourceLocation(Block.blockRegistry.getNameForObject(state.getBlock()), (new DefaultStateMapper()).getPropertyString(state.getProperties()));
+        return new ModelResourceLocation(Block.REGISTRY.getNameForObject(state.getBlock()), (new DefaultStateMapper()).getPropertyString(state.getProperties()));
     }
 
     @SideOnly(Side.CLIENT)
     public static ModelResourceLocation getBlockinventoryResourceLocation(Block block) {
-        return new ModelResourceLocation(Block.blockRegistry.getNameForObject(block), "inventory");
+        return new ModelResourceLocation(Block.REGISTRY.getNameForObject(block), "inventory");
     }
 
     @SideOnly(Side.CLIENT)
     public static ModelResourceLocation getItemInventoryResourceLocation(Item block) {
-        return new ModelResourceLocation(Item.itemRegistry.getNameForObject(block), "inventory");
+        return new ModelResourceLocation(Item.REGISTRY.getNameForObject(block), "inventory");
     }
 
     @SideOnly(Side.CLIENT)
     public static ResourceLocation getBlockResourceLocation(Block block) {
-        return Block.blockRegistry.getNameForObject(block);
+        return Block.REGISTRY.getNameForObject(block);
     }
 
     public class CustomTexture extends TextureAtlasSprite {
