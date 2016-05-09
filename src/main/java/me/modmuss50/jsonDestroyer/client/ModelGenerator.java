@@ -250,12 +250,11 @@ public class ModelGenerator {
                 for (int i = 0; i < iTexturedBucket.getMaxMeta(); i++) {
                     ModelResourceLocation inventory;
                     inventory = getItemInventoryResourceLocation(item);
-//                    if (iTexturedBucket.getMaxMeta() != 1) {
-//                        //TODO 1.9
-//                        if (item.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0) != null) {
-//                            inventory = item.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0);
-//                        }
-//                    }
+                    if (iTexturedBucket.getMaxMeta() != 1) {
+                        if (iTexturedBucket.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0) != null) {
+                            inventory = iTexturedBucket.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0);
+                        }
+                    }
                     Function<ResourceLocation, TextureAtlasSprite> textureGetter;
                     textureGetter = location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
                     ModelDynBucket modelDynBucket = new ModelDynBucket(new ResourceLocation("forge:items/bucket_base"), new ResourceLocation("forge:items/bucket_fluid"), new ResourceLocation("forge:items/bucket_cover"), iTexturedBucket.getFluid(i), iTexturedBucket.isGas(i));

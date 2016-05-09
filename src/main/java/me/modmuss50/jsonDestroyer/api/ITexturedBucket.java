@@ -1,5 +1,8 @@
 package me.modmuss50.jsonDestroyer.api;
 
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 
 /**
@@ -23,6 +26,8 @@ public interface ITexturedBucket extends IDestroyable {
      * @return Return 1 if basic item, else return the max damage
      */
     int getMaxMeta();
+
+    ModelResourceLocation getModel(ItemStack stack, EntityPlayer player, int useRemaining);
 
 
 }
