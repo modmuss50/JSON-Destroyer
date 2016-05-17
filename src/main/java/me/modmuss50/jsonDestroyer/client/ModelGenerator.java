@@ -159,7 +159,7 @@ public class ModelGenerator {
                     ModelResourceLocation modelResourceLocation = getModelResourceLocation(block.getStateFromMeta(i));
 
                     event.getModelRegistry().putObject(modelResourceLocation, model);
-                    ModelResourceLocation inventory = getBlockinventoryResourceLocation(block);
+                    ModelResourceLocation inventory = getBlockInventoryResourceLocation(block);
                     event.getModelRegistry().putObject(inventory, model);
                     itemModelMesher.register(Item.getItemFromBlock(block), i, inventory);
                     event.getModelRegistry().putObject(modelResourceLocation, model);
@@ -275,7 +275,7 @@ public class ModelGenerator {
     }
 
     @SideOnly(Side.CLIENT)
-    public static ModelResourceLocation getBlockinventoryResourceLocation(Block block) {
+    public static ModelResourceLocation getBlockInventoryResourceLocation(Block block) {
         return new ModelResourceLocation(Block.REGISTRY.getNameForObject(block), "inventory");
     }
 
