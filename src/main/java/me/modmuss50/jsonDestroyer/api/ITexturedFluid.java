@@ -5,8 +5,4 @@ package me.modmuss50.jsonDestroyer.api;
  */
 public interface ITexturedFluid extends IDestroyable {
 
-    /**
-     * @return The texture name
-     */
-    String getTextureName();
 }

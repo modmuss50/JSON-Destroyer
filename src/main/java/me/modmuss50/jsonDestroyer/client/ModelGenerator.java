@@ -25,6 +25,7 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -51,7 +52,7 @@ public class ModelGenerator {
     public ArrayList<BlockIconInfo> blockIconInfoList = new ArrayList<>();
 
     public HashMap<BlockIconInfo, TextureAtlasSprite> blockIconList = new HashMap<>();
-    public HashMap<BlockFluidBase, TextureAtlasSprite> fluidIcons = new HashMap<>();
+    public HashMap<Fluid, TextureAtlasSprite> fluidIcons = new HashMap<>();
     public List<ItemIconInfo> itemIcons = new ArrayList<>();
 
     public ModelGenerator(JsonDestroyer jsonDestroyer) {
@@ -84,14 +85,14 @@ public class ModelGenerator {
                     }
                 }
             } else if (object instanceof BlockFluidBase && object instanceof ITexturedFluid) {
-                ITexturedFluid fluidTextureProvider = (ITexturedFluid) object;
-                String name = fluidTextureProvider.getTextureName();
+                BlockFluidBase blockFluidBase = (BlockFluidBase) object;
+                String name = blockFluidBase.getFluid().getFlowing().toString();
                 TextureAtlasSprite texture = textureMap.getTextureExtry(name);
                 if (texture == null) {
                     texture = new CustomTexture(name);
                     textureMap.setTextureEntry(name, texture);
                 }
-                fluidIcons.put((BlockFluidBase) object, texture);
+                fluidIcons.put(blockFluidBase.getFluid(), texture);
             } else if (object instanceof Item && object instanceof ITexturedItem) {
                 ITexturedItem itemTexture = (ITexturedItem) object;
                 Item item = (Item) object;
@@ -165,28 +166,29 @@ public class ModelGenerator {
                     itemModelMesher.register(Item.getItemFromBlock(block), i, modelResourceLocation);
                 }
             } else if (object instanceof ITexturedFluid && object instanceof BlockFluidBase) {
-                final BlockFluidBase fluid = (BlockFluidBase) object;
-                final ModelResourceLocation fluidLocation = new ModelResourceLocation(fluid.getFluid().getFlowing(), "fluid");
+                final BlockFluidBase blockFluidBase = (BlockFluidBase) object;
+                Fluid fluid = blockFluidBase.getFluid();
+                final ModelResourceLocation fluidLocation = new ModelResourceLocation(fluid.getFlowing(), "fluid");
 
-                Item fluidItem = Item.getItemFromBlock(fluid);
+                Item fluidItem = Item.getItemFromBlock(blockFluidBase);
                 ModelBakery.registerItemVariants(fluidItem);
                 ModelLoader.setCustomMeshDefinition(fluidItem, stack -> fluidLocation);
-                ModelLoader.setCustomStateMapper(fluid, new StateMapperBase() {
-                    protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
-                        return fluidLocation;
-                    }
-                });
+//                ModelLoader.setCustomStateMapper(fluid, new StateMapperBase() {
+//                    protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+//                        return fluidLocation;
+//                    }
+//                });
 
                 for (int i = 0; i < 16; i++) {
-                    ModelResourceLocation location = new ModelResourceLocation(getBlockResourceLocation(fluid), "level=" + i);
-                    ModelFluid modelFluid = new ModelFluid(fluid.getFluid());
+                    ModelResourceLocation location = new ModelResourceLocation(getBlockResourceLocation(blockFluidBase), "level=" + i);
+                    ModelFluid modelFluid = new ModelFluid(fluid);
                     Function<ResourceLocation, TextureAtlasSprite> textureGetter = location1 -> fluidIcons.get(fluid);
                     IBakedModel bakedModel = modelFluid.bake(modelFluid.getDefaultState(), DefaultVertexFormats.BLOCK, textureGetter);
 
                     event.getModelRegistry().putObject(location, bakedModel);
                 }
-                ModelResourceLocation inventoryLocation = new ModelResourceLocation(getBlockResourceLocation(fluid), "inventory");
-                ModelFluid modelFluid = new ModelFluid(fluid.getFluid());
+                ModelResourceLocation inventoryLocation = new ModelResourceLocation(getBlockResourceLocation(blockFluidBase), "inventory");
+                ModelFluid modelFluid = new ModelFluid(fluid);
                 Function<ResourceLocation, TextureAtlasSprite> textureGetter = location -> fluidIcons.get(fluid);
                 IBakedModel bakedModel = modelFluid.bake(modelFluid.getDefaultState(), DefaultVertexFormats.ITEM, textureGetter);
 
