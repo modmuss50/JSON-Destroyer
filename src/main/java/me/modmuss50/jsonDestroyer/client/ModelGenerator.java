@@ -75,7 +75,7 @@ public class ModelGenerator {
                         TextureAtlasSprite texture = textureMap.getTextureExtry(name);
                         if (texture == null) {
                             texture = new CustomTexture(name);
-                            textureMap.setTextureEntry(name, texture);
+                            textureMap.setTextureEntry(texture);
                         }
                         BlockIconInfo iconInfo = new BlockIconInfo(block, i, side);
                         blockIconList.put(iconInfo, texture);
@@ -88,7 +88,7 @@ public class ModelGenerator {
                 TextureAtlasSprite texture = textureMap.getTextureExtry(name);
                 if (texture == null) {
                     texture = new CustomTexture(name);
-                    textureMap.setTextureEntry(name, texture);
+                    textureMap.setTextureEntry(texture);
                 }
                 fluidIcons.put(blockFluidBase.getFluid(), texture);
             } else if (object instanceof Item && object instanceof ITexturedItem) {
@@ -99,7 +99,7 @@ public class ModelGenerator {
                     TextureAtlasSprite texture = textureMap.getTextureExtry(name);
                     if (texture == null) {
                         texture = new CustomTexture(name);
-                        textureMap.setTextureEntry(name, texture);
+                        textureMap.setTextureEntry(texture);
                     }
                     ItemIconInfo info = new ItemIconInfo((Item) object, i, texture, name);
                     itemIcons.add(info);
@@ -111,7 +111,7 @@ public class ModelGenerator {
                     TextureAtlasSprite texture = textureMap.getTextureExtry(name);
                     if (texture == null) {
                         texture = new CustomTexture(name);
-                        textureMap.setTextureEntry(name, texture);
+                        textureMap.setTextureEntry(texture);
                     }
                     ItemIconInfo info = new ItemIconInfo((Item) object, i, texture, name);
                     info.isBucket = true;
