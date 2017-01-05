@@ -212,8 +212,8 @@ public class ModelGenerator {
                     inventory = getItemInventoryResourceLocation(item);
 
                     if (iTexturedItem.getMaxMeta() != 1) {
-                        if (iTexturedItem.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0) != null) {
-                            inventory = iTexturedItem.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0);
+                        if (iTexturedItem.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().player, 0) != null) {
+                            inventory = iTexturedItem.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().player, 0);
                             ModelLoader.registerItemVariants(item, inventory);
                         }
                     }
@@ -251,8 +251,8 @@ public class ModelGenerator {
                     ModelResourceLocation inventory;
                     inventory = getItemInventoryResourceLocation(item);
                     if (iTexturedBucket.getMaxMeta() != 1) {
-                        if (iTexturedBucket.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0) != null) {
-                            inventory = iTexturedBucket.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().thePlayer, 0);
+                        if (iTexturedBucket.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().player, 0) != null) {
+                            inventory = iTexturedBucket.getModel(new ItemStack(item, 1, i), Minecraft.getMinecraft().player, 0);
                         }
                     }
                     Function<ResourceLocation, TextureAtlasSprite> textureGetter;
